@@ -1,4 +1,4 @@
-module Hubspot
+module OldHubspot
   #
   # HubSpot Owners API
   #
@@ -31,20 +31,20 @@ module Hubspot
       def all(include_inactive=false)
         path     = GET_OWNERS_PATH
         params   = { includeInactive: include_inactive }
-        response = Hubspot::Connection.get_json(path, params)
+        response = OldHubspot::Connection.get_json(path, params)
         response.map { |r| new(r) }
       end
 
       def find(id, include_inactive=false)
-        response = Hubspot::Connection.get_json(path, owner_id: id,
-          include_inactive: include_inactive)
+        response = OldHubspot::Connection.get_json(path, owner_id: id,
+                                                   include_inactive: include_inactive)
         new(response)
       end
 
       def find_by_email(email, include_inactive=false)
         path     = GET_OWNERS_PATH
         params   = { email: email, includeInactive: include_inactive }
-        response = Hubspot::Connection.get_json(path, params)
+        response = OldHubspot::Connection.get_json(path, params)
         response.blank? ? nil : new(response.first)
       end
 

@@ -1,4 +1,4 @@
-module Hubspot
+module OldHubspot
   class ContactProperties < Properties
 
     ALL_PROPERTIES_PATH  = "/properties/v1/contacts/properties"

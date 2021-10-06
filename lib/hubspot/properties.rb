@@ -1,4 +1,4 @@
-module Hubspot
+module OldHubspot
   class Properties
 
     PROPERTY_SPECS = {
@@ -22,46 +22,46 @@ module Hubspot
       end
 
       def all(path, opts={}, filter={})
-        response = Hubspot::Connection.get_json(path, opts)
+        response = OldHubspot::Connection.get_json(path, opts)
         filter_results(response, :groupName, filter[:include], filter[:exclude])
       end
 
       def groups(path, opts={}, filter={})
-        response = Hubspot::Connection.get_json(path, opts)
+        response = OldHubspot::Connection.get_json(path, opts)
         filter_results(response, :name, filter[:include], filter[:exclude])
       end
 
       def create!(path, params={})
         post_data = valid_property_params(params)
         return nil if post_data.blank?
-        Hubspot::Connection.post_json(path, params: {}, body: post_data)
+        OldHubspot::Connection.post_json(path, params: {}, body: post_data)
       end
 
       def update!(path, property_name, params={})
         post_data = valid_property_params(params)
         return nil if post_data.blank?
-        Hubspot::Connection.put_json(path, params: { property_name: property_name }, body: post_data)
+        OldHubspot::Connection.put_json(path, params: { property_name: property_name }, body: post_data)
       end
 
       def delete!(path, property_name)
-        response = Hubspot::Connection.delete_json(path, property_name: property_name)
+        response = OldHubspot::Connection.delete_json(path, property_name: property_name)
         response.parsed_response
       end
 
       def create_group!(path, params={})
         post_data = valid_group_params(params)
         return nil if post_data.blank?
-        Hubspot::Connection.post_json(path, params: {}, body: post_data)
+        OldHubspot::Connection.post_json(path, params: {}, body: post_data)
       end
 
       def update_group!(path, group_name, params={})
         post_data = valid_group_params(params)
         return nil if post_data.blank?
-        Hubspot::Connection.put_json(path, params: { group_name: group_name }, body: post_data)
+        OldHubspot::Connection.put_json(path, params: { group_name: group_name }, body: post_data)
       end
 
       def delete_group!(path, group_name)
-        response = Hubspot::Connection.delete_json(path, group_name: group_name)
+        response = OldHubspot::Connection.delete_json(path, group_name: group_name)
         response.parsed_response
       end
 

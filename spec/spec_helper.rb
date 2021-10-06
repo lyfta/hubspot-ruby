@@ -28,7 +28,7 @@ Dir["#{RSPEC_ROOT}/shared_examples/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
   config.after(:each) do
-    Hubspot::Config.reset!
+    OldHubspot::Config.reset!
   end
 
   config.filter_run_when_matching :focus
