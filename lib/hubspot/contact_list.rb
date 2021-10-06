@@ -1,4 +1,4 @@
-module Hubspot
+module OldHubspot
   #
   # HubSpot Contact lists API
   #
@@ -15,9 +15,9 @@ module Hubspot
       # {http://developers.hubspot.com/docs/methods/lists/create_list}
       def create!(opts={})
         dynamic = opts.delete(:dynamic) { false }
-        portal_id = opts.delete(:portal_id) { Hubspot::Config.portal_id }
+        portal_id = opts.delete(:portal_id) { OldHubspot::Config.portal_id }
 
-        response = Hubspot::Connection.post_json(LISTS_PATH, params: {}, body: opts.merge({ dynamic: dynamic, portal_id: portal_id}) )
+        response = OldHubspot::Connection.post_json(LISTS_PATH, params: {}, body: opts.merge({ dynamic: dynamic, portal_id: portal_id}) )
         new(response)
       end
 
@@ -30,7 +30,7 @@ module Hubspot
 
         # NOTE: As opposed of what the documentation says, getting the static or dynamic lists returns all the lists, not only 20 lists
         path = LISTS_PATH + (static ? '/static' : dynamic ? '/dynamic' : '')
-        response = Hubspot::Connection.get_json(path, opts)
+        response = OldHubspot::Connection.get_json(path, opts)
         response['lists'].map { |l| new(l) }
       end
 
@@ -41,10 +41,10 @@ module Hubspot
         when Integer then [false, LIST_PATH, { list_id: ids }]
         when String then [false, LIST_PATH, { list_id: ids.to_i }]
         when Array then [true, LIST_BATCH_PATH, { batch_list_id: ids.map(&:to_i) }]
-        else raise Hubspot::InvalidParams, 'expecting Integer or Array of Integers parameter'
+        else raise OldHubspot::InvalidParams, 'expecting Integer or Array of Integers parameter'
         end
 
-        response = Hubspot::Connection.get_json(path, params)
+        response = OldHubspot::Connection.get_json(path, params)
         batch_mode ? response['lists'].map { |l| new(l) } : new(response)
       end
     end
@@ -61,14 +61,14 @@ module Hubspot
 
     # {http://developers.hubspot.com/docs/methods/lists/update_list}
     def update!(opts={})
-      response = Hubspot::Connection.post_json(LIST_PATH, params: { list_id: @id }, body: opts)
+      response = OldHubspot::Connection.post_json(LIST_PATH, params: { list_id: @id }, body: opts)
       self.send(:assign_properties, response)
       self
     end
 
     # {http://developers.hubspot.com/docs/methods/lists/delete_list}
     def destroy!
-      response = Hubspot::Connection.delete_json(LIST_PATH, { list_id: @id })
+      response = OldHubspot::Connection.delete_json(LIST_PATH, { list_id: @id })
       @destroyed = (response.code == 204)
     end
 
@@ -83,25 +83,31 @@ module Hubspot
         path = recent ? RECENT_CONTACTS_PATH : CONTACTS_PATH
         opts[:list_id] = @id
 
-        response = Hubspot::Connection.get_json(path, Hubspot::ContactProperties.add_default_parameters(opts))
-        @contacts = response['contacts'].map! { |c| Hubspot::Contact.from_result(c) }
+        response = OldHubspot::Connection.get_json(path, OldHubspot::ContactProperties.add_default_parameters(opts))
+        @contacts = response['contacts'].map! { |c| OldHubspot::Contact.from_result(c) }
         paged ? response : @contacts
       else
         @contacts
       end
     end
 
+    # {http://developers.hubspot.com/docs/methods/lists/refresh_list}
+    def refresh
+      response = OldHubspot::Connection.post_json(REFRESH_PATH, params: { list_id: @id, no_parse: true }, body: {})
+      response.code == 204
+    end
+
     # {http://developers.hubspot.com/docs/methods/lists/add_contact_to_list}
     def add(contacts)
       contact_ids = [contacts].flatten.uniq.compact.map(&:id)
-      response = Hubspot::Connection.post_json(ADD_CONTACT_PATH, params: { list_id: @id }, body: { vids: contact_ids })
+      response = OldHubspot::Connection.post_json(ADD_CONTACT_PATH, params: { list_id: @id }, body: { vids: contact_ids })
       response['updated'].sort == contact_ids.sort
     end
 
     # {http://developers.hubspot.com/docs/methods/lists/remove_contact_from_list}
     def remove(contacts)
       contact_ids = [contacts].flatten.uniq.compact.map(&:id)
-      response = Hubspot::Connection.post_json(REMOVE_CONTACT_PATH, params: { list_id: @id }, body: { vids: contact_ids })
+      response = OldHubspot::Connection.post_json(REMOVE_CONTACT_PATH, params: { list_id: @id }, body: { vids: contact_ids })
       response['updated'].sort == contact_ids.sort
     end
 

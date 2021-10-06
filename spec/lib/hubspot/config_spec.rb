@@ -1,9 +1,9 @@
-describe Hubspot::Config do
+describe OldHubspot::Config do
   describe ".configure" do
     it "sets the access token config" do
       access_token = "foobar"
 
-      config = Hubspot::Config.configure(access_token: access_token)
+      config = OldHubspot::Config.configure(access_token: access_token)
 
       expect(config.access_token).to eq(access_token)
     end
@@ -11,13 +11,13 @@ describe Hubspot::Config do
     it "changes the base_url" do
       base_url = "https://api.hubapi.com/v2"
 
-      config = Hubspot::Config.configure(base_url: base_url, access_token: 'foobar')
+      config = OldHubspot::Config.configure(base_url: base_url, access_token: 'foobar')
 
       expect(config.base_url).to eq(base_url)
     end
 
     it "sets a default value for base_url" do
-      config = Hubspot::Config.configure(access_token: 'foobar')
+      config = OldHubspot::Config.configure(access_token: 'foobar')
 
       expect(config.base_url).to eq("https://api.hubapi.com")
     end
@@ -25,7 +25,7 @@ describe Hubspot::Config do
     it "sets a value for portal_id" do
       portal_id = "62515"
 
-      config = Hubspot::Config.configure(
+      config = OldHubspot::Config.configure(
         access_token: 'foobar',
         portal_id: portal_id
       )
@@ -35,17 +35,17 @@ describe Hubspot::Config do
 
     it "raises when an authentication approach is not provided" do
       expect {
-        Hubspot::Config.configure({})
-      }.to raise_error(Hubspot::ConfigurationError)
+        OldHubspot::Config.configure({})
+      }.to raise_error(OldHubspot::ConfigurationError)
     end
 
     it "raises when two authentication approaches are provided" do
       expect {
-        Hubspot::Config.configure({
+        OldHubspot::Config.configure({
           hapikey: "123abc",
           access_token: "456def",
         })
-      }.to raise_error(Hubspot::ConfigurationError)
+      }.to raise_error(OldHubspot::ConfigurationError)
     end
 
     context 'hapikey deprecation' do
@@ -64,32 +64,32 @@ describe Hubspot::Config do
 
   describe ".reset!" do
     it "resets the config values" do
-      Hubspot::Config.configure(access_token: "123abc", portal_id: "456def")
+      OldHubspot::Config.configure(access_token: "123abc", portal_id: "456def")
 
-      Hubspot::Config.reset!
+      OldHubspot::Config.reset!
 
-      expect(Hubspot::Config.access_token).to be nil
-      expect(Hubspot::Config.portal_id).to be nil
+      expect(OldHubspot::Config.access_token).to be nil
+      expect(OldHubspot::Config.portal_id).to be nil
     end
   end
 
   describe ".ensure!" do
     context "when a specified parameter is missing" do
       it "raises an error" do
-        Hubspot::Config.configure(access_token: "123abc")
+        OldHubspot::Config.configure(access_token: "123abc")
 
         expect {
-          Hubspot::Config.ensure!(:portal_id)
-        }.to raise_error(Hubspot::ConfigurationError)
+          OldHubspot::Config.ensure!(:portal_id)
+        }.to raise_error(OldHubspot::ConfigurationError)
       end
     end
 
     context "when all specified parameters are present" do
       it "does not raise an error" do
-        Hubspot::Config.configure(access_token: "123abc", portal_id: "456def")
+        OldHubspot::Config.configure(access_token: "123abc", portal_id: "456def")
 
         expect {
-          Hubspot::Config.ensure!(:portal_id)
+          OldHubspot::Config.ensure!(:portal_id)
         }.not_to raise_error
       end
     end

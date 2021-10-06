@@ -1,6 +1,6 @@
 require 'hubspot-api-ruby'
 require 'rails'
-module Hubspot
+module OldHubspot
   class Railtie < Rails::Railtie
   end
 end

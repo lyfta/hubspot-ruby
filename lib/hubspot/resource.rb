@@ -1,4 +1,4 @@
-module Hubspot
+module OldHubspot
   class Resource
     class_attribute :id_field, instance_writer: false
     class_attribute :property_name_field, instance_writer: false
@@ -22,29 +22,29 @@ module Hubspot
 
       def create(properties = {})
         request = {
-          properties: Hubspot::Utils.hash_to_properties(properties.stringify_keys, key_name: property_name_field)
+          properties: OldHubspot::Utils.hash_to_properties(properties.stringify_keys, key_name: property_name_field)
         }
-        response = Hubspot::Connection.post_json(create_path, params: {}, body: request)
+        response = OldHubspot::Connection.post_json(create_path, params: {}, body: request)
         from_result(response)
       end
 
       def update(id, properties = {})
         begin
           update!(id, properties)
-        rescue Hubspot::RequestError => e
+        rescue OldHubspot::RequestError => e
           false
         end
       end
 
       def update!(id, properties = {})
         request = {
-          properties: Hubspot::Utils.hash_to_properties(properties.stringify_keys, key_name: property_name_field)
+          properties: OldHubspot::Utils.hash_to_properties(properties.stringify_keys, key_name: property_name_field)
         }
 
         if update_method == "put"
-          response = Hubspot::Connection.put_json(update_path, params: { id: id, no_parse: true }, body: request)
+          response = OldHubspot::Connection.put_json(update_path, params: { id: id, no_parse: true }, body: request)
         else
-          response = Hubspot::Connection.post_json(update_path, params: { id: id, no_parse: true }, body: request)
+          response = OldHubspot::Connection.post_json(update_path, params: { id: id, no_parse: true }, body: request)
         end
 
         response.success?
@@ -91,9 +91,9 @@ module Hubspot
     end
 
     def reload
-      raise(Hubspot::InvalidParams.new("Resource must have an ID")) if @id.nil?
+      raise(OldHubspot::InvalidParams.new("Resource must have an ID")) if @id.nil?
 
-      response = Hubspot::Connection.get_json(find_path, id: @id)
+      response = OldHubspot::Connection.get_json(find_path, id: @id)
       initialize_from(response.with_indifferent_access)
 
       self
@@ -105,19 +105,19 @@ module Hubspot
 
     def save
       request = {
-        properties: Hubspot::Utils.hash_to_properties(@changes.stringify_keys, key_name: property_name_field)
+        properties: OldHubspot::Utils.hash_to_properties(@changes.stringify_keys, key_name: property_name_field)
       }
 
       if persisted?
         if update_method == "put"
-          response = Hubspot::Connection.put_json(update_path, params: { id: @id }, body: request)
+          response = OldHubspot::Connection.put_json(update_path, params: { id: @id }, body: request)
         else
-          response = Hubspot::Connection.post_json(update_path, params: { id: @id }, body: request)
+          response = OldHubspot::Connection.post_json(update_path, params: { id: @id }, body: request)
         end
 
         update_from_changes
       else
-        response = Hubspot::Connection.post_json(create_path, params: {}, body: request)
+        response = OldHubspot::Connection.post_json(create_path, params: {}, body: request)
 
         # Grab the new ID from the response
         @id = response[id_field]
@@ -140,9 +140,9 @@ module Hubspot
     end
 
     def delete
-      raise(Hubspot::InvalidParams.new("Resource must have an ID")) if @id.nil?
+      raise(OldHubspot::InvalidParams.new("Resource must have an ID")) if @id.nil?
 
-      Hubspot::Connection.delete_json(delete_path, id: @id)
+      OldHubspot::Connection.delete_json(delete_path, id: @id)
 
       @deleted = true
       @changes = HashWithIndifferentAccess.new

@@ -1,8 +1,8 @@
 class Hubspot::Association
   OBJECT_TARGET_TO_CLASS = {
-    "Contact" => Hubspot::Contact,
-    "Deal" => Hubspot::Deal,
-    "Company" => Hubspot::Company
+    "Contact" => OldHubspot::Contact,
+    "Deal" => OldHubspot::Deal,
+    "Company" => OldHubspot::Company
   }.freeze
 
   ASSOCIATION_DEFINITIONS = {

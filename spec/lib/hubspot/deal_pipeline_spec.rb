@@ -1,14 +1,14 @@
-RSpec.describe Hubspot::DealPipeline do
+RSpec.describe OldHubspot::DealPipeline do
 
   describe ".find" do
     it "retrieves a record by id" do
       VCR.use_cassette("find_deal_pipeline") do
-        deal_pipeline = Hubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
+        deal_pipeline = OldHubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
         id = deal_pipeline.pipeline_id
 
-        result = Hubspot::DealPipeline.find(deal_pipeline.pipeline_id)
+        result = OldHubspot::DealPipeline.find(deal_pipeline.pipeline_id)
 
-        expect(result).to be_a(Hubspot::DealPipeline)
+        expect(result).to be_a(OldHubspot::DealPipeline)
 
         deal_pipeline.destroy!
       end
@@ -18,12 +18,12 @@ RSpec.describe Hubspot::DealPipeline do
   describe ".all" do
     it "returns a list" do
       VCR.use_cassette("all_deal_pipelines") do
-        deal_pipeline = Hubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
+        deal_pipeline = OldHubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
 
-        results = Hubspot::DealPipeline.all
+        results = OldHubspot::DealPipeline.all
 
         expect(results).to be_kind_of(Array)
-        expect(results.first).to be_a(Hubspot::DealPipeline)
+        expect(results.first).to be_a(OldHubspot::DealPipeline)
 
         deal_pipeline.destroy!
       end
@@ -33,9 +33,9 @@ RSpec.describe Hubspot::DealPipeline do
   describe ".create!" do
     it "creates a new record" do
       VCR.use_cassette("create_deal_pipeline") do
-        result = Hubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
+        result = OldHubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
 
-        expect(result).to be_a(Hubspot::DealPipeline)
+        expect(result).to be_a(OldHubspot::DealPipeline)
 
         result.destroy!
       end
@@ -45,7 +45,7 @@ RSpec.describe Hubspot::DealPipeline do
   describe "#destroy!" do
     it "deletes the record" do
       VCR.use_cassette("delete_deal_pipeline") do
-        deal_pipeline = Hubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
+        deal_pipeline = OldHubspot::DealPipeline.create!(label: "New Pipeline #{SecureRandom.hex}")
         id = deal_pipeline.pipeline_id
 
         result = deal_pipeline.destroy!
@@ -64,7 +64,7 @@ RSpec.describe Hubspot::DealPipeline do
         ],
       }
 
-      deal_pipeline = Hubspot::DealPipeline.new(data)
+      deal_pipeline = OldHubspot::DealPipeline.new(data)
 
       result = deal_pipeline[0]
 

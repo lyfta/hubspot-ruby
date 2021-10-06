@@ -1,4 +1,4 @@
-describe Hubspot::Deal do
+describe OldHubspot::Deal do
   let(:portal_id) { ENV.fetch("HUBSPOT_PORTAL_ID").to_i }
   let(:company) { Hubspot::Company.create(name: SecureRandom.hex) }
   let(:company_id) { company.id }
@@ -9,7 +9,7 @@ describe Hubspot::Deal do
 
   describe ".create!" do
     cassette "deal_create"
-    subject { Hubspot::Deal.create!(portal_id, [company_id], [vid], {}) }
+    subject { OldHubspot::Deal.create!(portal_id, [company_id], [vid], {}) }
     its(:deal_id)     { should_not be_nil }
     its(:portal_id)   { should eql portal_id }
     its(:company_ids) { should eql [company_id]}
@@ -123,9 +123,10 @@ describe Hubspot::Deal do
 
   describe ".find" do
     cassette "deal_find"
+    let(:deal) {OldHubspot::Deal.create!(portal_id, [company_id], [vid], { amount: amount})}
 
     it 'must find by the deal id' do
-      find_deal = Hubspot::Deal.find(deal.deal_id)
+      find_deal = OldHubspot::Deal.find(deal.deal_id)
       find_deal.deal_id.should eql deal.deal_id
       find_deal.properties["amount"].should eql amount
     end
@@ -133,10 +134,10 @@ describe Hubspot::Deal do
 
   describe '.find_by_company' do
     cassette
-    let!(:deal) { Hubspot::Deal.create!(portal_id, [company.id], [], { amount: amount }) }
+    let!(:deal) { OldHubspot::Deal.create!(portal_id, [company.id], [], { amount: amount }) }
 
     it 'returns company deals' do
-      deals = Hubspot::Deal.find_by_company(company)
+      deals = OldHubspot::Deal.find_by_company(company)
       deals.first.deal_id.should eql deal.deal_id
       deals.first.properties['amount'].should eql amount
     end
@@ -144,10 +145,10 @@ describe Hubspot::Deal do
 
   describe '.find_by_contact' do
     cassette
-    let!(:deal) { Hubspot::Deal.create!(portal_id, [], [contact.id], { amount: amount }) }
+    let!(:deal) { OldHubspot::Deal.create!(portal_id, [], [contact.id], { amount: amount }) }
 
     it 'returns contact deals' do
-      deals = Hubspot::Deal.find_by_contact(contact)
+      deals = OldHubspot::Deal.find_by_contact(contact)
       deals.first.deal_id.should eql deal.deal_id
       deals.first.properties['amount'].should eql amount
     end
@@ -162,7 +163,7 @@ describe Hubspot::Deal do
 
       first = deals.first
 
-      expect(first).to be_a Hubspot::Deal
+      expect(first).to be_a OldHubspot::Deal
     end
 
     it 'must filter only 2 deals' do
@@ -170,14 +171,25 @@ describe Hubspot::Deal do
       deals = Hubspot::Deal.recent(count: 2)
       expect(deals.size).to eql 2
     end
-
   end
 
   describe "#destroy!" do
     it "should remove from hubspot" do
       VCR.use_cassette("destroy_deal") do
+        deal = OldHubspot::Deal.create!(portal_id, [company_id], [vid], { amount: amount})
+
         result = deal.destroy!
         expect(result).to be true
+      end
+    end
+  end
+
+  describe '#[]' do
+    subject{ OldHubspot::Deal.new(example_deal_hash) }
+
+    it 'should get a property' do
+      subject.properties.each do |property, value|
+        expect(subject[property]).to eql value
       end
     end
   end

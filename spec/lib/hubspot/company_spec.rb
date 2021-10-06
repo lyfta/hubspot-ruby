@@ -1,4 +1,5 @@
-RSpec.describe Hubspot::Company do
+
+RSpec.describe OldHubspot::Company do
 
   it_behaves_like "a saveable resource", :company do
     def set_property(company)
@@ -30,7 +31,7 @@ RSpec.describe Hubspot::Company do
       it 'raises an error' do
         expect {
           subject
-        }.to raise_error(Hubspot::NotFoundError, /resource not found/)
+        }.to raise_error(OldHubspot::NotFoundError, /resource not found/)
       end
     end
   end
@@ -129,7 +130,7 @@ RSpec.describe Hubspot::Company do
       it 'raises an error' do
         expect {
           subject.reload
-        }.to raise_error(Hubspot::InvalidParams)
+        }.to raise_error(OldHubspot::InvalidParams)
       end
     end
   end
@@ -143,7 +144,7 @@ RSpec.describe Hubspot::Company do
       it 'raises an error' do
         expect {
           subject.delete
-        }.to raise_error(Hubspot::InvalidParams)
+        }.to raise_error(OldHubspot::InvalidParams)
       end
     end
 
@@ -163,7 +164,7 @@ RSpec.describe Hubspot::Company do
 
         expect {
           described_class.find subject.id
-        }.to raise_error(Hubspot::NotFoundError)
+        }.to raise_error(OldHubspot::NotFoundError)
       end
     end
   end
@@ -175,8 +176,8 @@ RSpec.describe Hubspot::Company do
       subject { described_class.all }
 
       it 'returns a collection' do
-        expect(subject).to be_a(Hubspot::PagedCollection)
-        expect(subject.first).to be_a(Hubspot::Company)
+        expect(subject).to be_a(OldHubspot::PagedCollection)
+        expect(subject.first).to be_a(OldHubspot::Company)
       end
 
       it 'has an offset' do
@@ -195,7 +196,7 @@ RSpec.describe Hubspot::Company do
       subject { described_class.all offset: company.id }
 
       it 'returns a collection' do
-        expect(subject).to be_a(Hubspot::PagedCollection)
+        expect(subject).to be_a(OldHubspot::PagedCollection)
       end
 
       it 'has an offset' do
@@ -214,8 +215,8 @@ RSpec.describe Hubspot::Company do
       subject { described_class.all limit: limit }
 
       it 'returns a collection' do
-        expect(subject).to be_a(Hubspot::PagedCollection)
-        expect(subject.first).to be_a(Hubspot::Company)
+        expect(subject).to be_a(OldHubspot::PagedCollection)
+        expect(subject.first).to be_a(OldHubspot::Company)
       end
 
       it 'respects the limit' do
@@ -232,8 +233,8 @@ RSpec.describe Hubspot::Company do
     subject { described_class.search_domain company.domain }
 
     it 'returns a collection' do
-      expect(subject).to be_a(Hubspot::PagedCollection)
-      expect(subject.first).to be_a(Hubspot::Company)
+      expect(subject).to be_a(OldHubspot::PagedCollection)
+      expect(subject.first).to be_a(OldHubspot::Company)
     end
   end
 
@@ -243,7 +244,7 @@ RSpec.describe Hubspot::Company do
     subject { described_class.recently_created }
 
     it 'returns a collection' do
-      expect(subject).to be_a(Hubspot::PagedCollection)
+      expect(subject).to be_a(OldHubspot::PagedCollection)
     end
   end
 
@@ -253,7 +254,7 @@ RSpec.describe Hubspot::Company do
     subject { described_class.recently_modified }
 
     it 'returns a collection' do
-      expect(subject).to be_a(Hubspot::PagedCollection)
+      expect(subject).to be_a(OldHubspot::PagedCollection)
     end
   end
 

@@ -1,6 +1,6 @@
 module HubspotApiHelpers
   def hubspot_api_url(path)
-    URI.join(Hubspot::Config.base_url, path)
+    URI.join(OldHubspot::Config.base_url, path)
   end
 
   def assert_hubspot_api_request(method, path, options = {})

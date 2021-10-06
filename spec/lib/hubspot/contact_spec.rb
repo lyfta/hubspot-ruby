@@ -1,5 +1,4 @@
-RSpec.describe Hubspot::Contact do
-
+RSpec.describe OldHubspot::Contact do
   it_behaves_like "a saveable resource", :contact do
     def set_property(contact)
       contact.firstname = "foobar"
@@ -33,7 +32,7 @@ RSpec.describe Hubspot::Contact do
       it 'raises an error' do
         expect {
           subject
-        }.to raise_error(Hubspot::NotFoundError, /contact does not exist/)
+        }.to raise_error(OldHubspot::NotFoundError, /contact does not exist/)
       end
     end
   end
@@ -85,7 +84,7 @@ RSpec.describe Hubspot::Contact do
       it 'raises an error' do
         expect {
           subject
-        }.to raise_error(Hubspot::RequestError)
+        }.to raise_error(OldHubspot::RequestError)
       end
     end
 
@@ -99,7 +98,7 @@ RSpec.describe Hubspot::Contact do
       it 'raises an error' do
         expect {
           subject
-        }.to raise_error(Hubspot::RequestError)
+        }.to raise_error(OldHubspot::RequestError)
       end
     end
   end
@@ -185,7 +184,7 @@ RSpec.describe Hubspot::Contact do
       it 'raises an error' do
         expect {
           subject
-        }.to raise_error(Hubspot::RequestError)
+        }.to raise_error(OldHubspot::RequestError)
       end
     end
   end
@@ -214,7 +213,7 @@ RSpec.describe Hubspot::Contact do
       it 'raises an error' do
         expect {
           subject
-        }.to raise_error(Hubspot::RequestError)
+        }.to raise_error(OldHubspot::RequestError)
       end
     end
   end

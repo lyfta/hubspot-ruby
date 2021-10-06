@@ -1,4 +1,4 @@
-class Hubspot::Company < Hubspot::Resource
+class OldHubspot::Company < OldHubspot::Resource
   self.id_field = "companyId"
   self.property_name_field = "name"
 
@@ -16,8 +16,8 @@ class Hubspot::Company < Hubspot::Resource
 
   class << self
     def all(opts = {})
-      Hubspot::PagedCollection.new(opts) do |options, offset, limit|
-        response = Hubspot::Connection.get_json(
+      OldHubspot::PagedCollection.new(opts) do |options, offset, limit|
+        response = OldHubspot::Connection.get_json(
           ALL_PATH,
           options.merge(offset: offset, limit: limit)
         )
@@ -29,7 +29,7 @@ class Hubspot::Company < Hubspot::Resource
     end
 
     def search_domain(domain, opts = {})
-      Hubspot::PagedCollection.new(opts) do |options, offset, limit|
+      OldHubspot::PagedCollection.new(opts) do |options, offset, limit|
         request = {
           "limit" => limit,
           "requestOptions" => options,
@@ -39,7 +39,7 @@ class Hubspot::Company < Hubspot::Resource
           }
         }
 
-        response = Hubspot::Connection.post_json(
+        response = OldHubspot::Connection.post_json(
           SEARCH_DOMAIN_PATH,
           params: { domain: domain },
           body: request
@@ -52,8 +52,8 @@ class Hubspot::Company < Hubspot::Resource
     end
 
     def recently_created(opts = {})
-      Hubspot::PagedCollection.new(opts) do |options, offset, limit|
-        response = Hubspot::Connection.get_json(
+      OldHubspot::PagedCollection.new(opts) do |options, offset, limit|
+        response = OldHubspot::Connection.get_json(
           RECENTLY_CREATED_PATH,
           {offset: offset, count: limit}
         )
@@ -65,8 +65,8 @@ class Hubspot::Company < Hubspot::Resource
     end
 
     def recently_modified(opts = {})
-      Hubspot::PagedCollection.new(opts) do |options, offset, limit|
-        response = Hubspot::Connection.get_json(
+      OldHubspot::PagedCollection.new(opts) do |options, offset, limit|
+        response = OldHubspot::Connection.get_json(
           RECENTLY_MODIFIED_PATH,
           {offset: offset, count: limit}
         )
@@ -78,11 +78,11 @@ class Hubspot::Company < Hubspot::Resource
     end
 
     def add_contact(id, contact_id)
-      Hubspot::Association.create("Company", id, "Contact", contact_id)
+      OldHubspot::Association.create("Company", id, "Contact", contact_id)
     end
 
     def remove_contact(id, contact_id)
-      Hubspot::Association.delete("Company", id, "Contact", contact_id)
+      OldHubspot::Association.delete("Company", id, "Contact", contact_id)
     end
 
     def batch_update(companies, opts = {})
@@ -102,7 +102,7 @@ class Hubspot::Company < Hubspot::Resource
       request.compact!
       return true if request.empty?
 
-      Hubspot::Connection.post_json(
+      OldHubspot::Connection.post_json(
         BATCH_UPDATE_PATH,
         params: {},
         body: request
@@ -113,15 +113,15 @@ class Hubspot::Company < Hubspot::Resource
   end
 
   def contacts(opts = {})
-    Hubspot::PagedCollection.new(opts) do |options, offset, limit|
-      response = Hubspot::Connection.get_json(
+    OldHubspot::PagedCollection.new(opts) do |options, offset, limit|
+      response = OldHubspot::Connection.get_json(
         CONTACTS_PATH,
         {"id" => @id, "vidOffset" => offset, "count" => limit}
       )
 
       contacts = response["contacts"].map do |result|
-        result["properties"] = Hubspot::Utils.properties_array_to_hash(result["properties"])
-        Hubspot::Contact.from_result(result)
+        result["properties"] = OldHubspot::Utils.properties_array_to_hash(result["properties"])
+        OldHubspot::Contact.from_result(result)
       end
 
       [contacts, response["vidOffset"], response["hasMore"]]
@@ -129,8 +129,8 @@ class Hubspot::Company < Hubspot::Resource
   end
 
   def contact_ids(opts = {})
-    Hubspot::PagedCollection.new(opts) do |options, offset, limit|
-      response = Hubspot::Connection.get_json(
+    OldHubspot::PagedCollection.new(opts) do |options, offset, limit|
+      response = OldHubspot::Connection.get_json(
         CONTACT_IDS_PATH,
         {"id" => @id, "vidOffset" => offset, "count" => limit}
       )

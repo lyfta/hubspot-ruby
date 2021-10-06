@@ -1,4 +1,4 @@
-describe Hubspot::Owner do
+describe OldHubspot::Owner do
   let(:example_owners) do
     VCR.use_cassette('owner_example') do
       headers = { Authorization: "Bearer #{ENV.fetch('HUBSPOT_ACCESS_TOKEN')}" }
@@ -10,7 +10,7 @@ describe Hubspot::Owner do
     cassette 'owner_all'
 
     it 'should find all owners' do
-      owners = Hubspot::Owner.all
+      owners = OldHubspot::Owner.all
 
       expect(owners.blank?).to be false
       compare_owners(owners, example_owners)
@@ -24,7 +24,7 @@ describe Hubspot::Owner do
     let(:email) { sample['email'] }
 
     it 'should find a user via their email address' do
-      owner = Hubspot::Owner.find_by_email(email)
+      owner = OldHubspot::Owner.find_by_email(email)
       sample.map do |key, val|
         expect(owner[key]).to eq(val)
       end
@@ -38,7 +38,7 @@ describe Hubspot::Owner do
     let(:emails) { samples.map { |s| s['email'] } }
 
     it 'should find users via their email address' do
-      owners = Hubspot::Owner.find_by_emails(emails)
+      owners = OldHubspot::Owner.find_by_emails(emails)
       compare_owners(owners, samples)
     end
   end

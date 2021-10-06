@@ -1,4 +1,4 @@
-class Hubspot::PagedCollection < Hubspot::Collection
+class OldHubspot::PagedCollection < OldHubspot::Collection
   attr_accessor :offset, :limit
 
   def initialize(opts = {}, &block)

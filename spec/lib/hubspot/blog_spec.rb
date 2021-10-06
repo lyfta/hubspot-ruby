@@ -1,21 +1,20 @@
 require 'timecop'
 
-describe Hubspot do
+describe OldHubspot do
   before { Timecop.freeze(Time.utc(2012, 'Oct', 10)) }
-
   after { Timecop.return }
 
   let(:last_blog_id) { Hubspot::Blog.list.last['id'] }
   let(:last_blog_post_id) { Hubspot::Blog.list.last.posts.first['id'] }
 
-  describe Hubspot::Blog do
+  describe OldHubspot::Blog do
     describe ".list" do
       it "returns a list of blogs" do
         VCR.use_cassette("blog_list") do
-          result = Hubspot::Blog.list
+          result = OldHubspot::Blog.list
 
           expect(result).to be_kind_of(Array)
-          expect(result.first).to be_a(Hubspot::Blog)
+          expect(result.first).to be_a(OldHubspot::Blog)
         end
       end
     end
@@ -25,7 +24,7 @@ describe Hubspot do
         VCR.use_cassette("blog_list") do
           result = Hubspot::Blog.find_by_id(last_blog_id)
 
-          expect(result).to be_a(Hubspot::Blog)
+          expect(result).to be_a(OldHubspot::Blog)
         end
       end
     end
@@ -36,7 +35,7 @@ describe Hubspot do
           "id" => 123,
           "name" => "Demo",
         }
-        blog = Hubspot::Blog.new(data)
+        blog = OldHubspot::Blog.new(data)
 
         expect(blog["id"]).to eq(data["id"])
         expect(blog["name"]).to eq(data["name"])
@@ -44,7 +43,7 @@ describe Hubspot do
 
       context "when the value is unknown" do
         it "returns nil" do
-          blog = Hubspot::Blog.new({})
+          blog = OldHubspot::Blog.new({})
 
           expect(blog["nope"]).to be_nil
         end
@@ -56,7 +55,7 @@ describe Hubspot do
         VCR.use_cassette("blog_posts/all_blog_posts") do
           blog_id = last_blog_id
           created_gt = timestamp_in_milliseconds(Time.now - 2.months)
-          blog = Hubspot::Blog.new({ "id" => blog_id })
+          blog = OldHubspot::Blog.new({ "id" => blog_id })
 
           result = blog.posts
 
@@ -67,7 +66,8 @@ describe Hubspot do
       it "includes given parameters in the request" do
         VCR.use_cassette("blog_posts/filter_blog_posts") do
           created_gt = timestamp_in_milliseconds(Time.now - 2.months)
-          blog = Hubspot::Blog.new({ "id" => last_blog_id })
+
+          blog = OldHubspot::Blog.new({ "id" => last_blog_id })
 
           result = blog.posts({ state: "DRAFT" })
 
@@ -76,20 +76,20 @@ describe Hubspot do
       end
 
       it "raises when given an unknown state" do
-        blog = Hubspot::Blog.new({})
+        blog = OldHubspot::Blog.new({})
 
         expect {
           blog.posts({ state: "unknown" })
-        }.to raise_error(Hubspot::InvalidParams, "State parameter was invalid")
+        }.to raise_error(OldHubspot::InvalidParams, "State parameter was invalid")
       end
     end
   end
 
-  describe Hubspot::BlogPost do
+  describe OldHubspot::BlogPost do
     describe "#created_at" do
       it "returns the created timestamp as a Time" do
         timestamp = timestamp_in_milliseconds(Time.now)
-        blog_post = Hubspot::BlogPost.new({ "created" => timestamp })
+        blog_post = OldHubspot::BlogPost.new({ "created" => timestamp })
 
         expect(blog_post.created_at).to eq(Time.at(timestamp/1000))
       end
@@ -98,9 +98,9 @@ describe Hubspot do
     describe ".find_by_blog_post_id" do
       it "retrieves a blog post by id" do
         VCR.use_cassette "blog_posts" do
-          result = Hubspot::BlogPost.find_by_blog_post_id(last_blog_post_id)
+          result = OldHubspot::BlogPost.find_by_blog_post_id(last_blog_post_id)
 
-          expect(result).to be_a(Hubspot::BlogPost)
+          expect(result).to be_a(OldHubspot::BlogPost)
         end
       end
     end
@@ -108,18 +108,18 @@ describe Hubspot do
     describe "#topics" do
       it "returns the list of topics" do
         VCR.use_cassette "blog_posts" do
-          blog_post = Hubspot::BlogPost.find_by_blog_post_id(last_blog_post_id)
+          blog_post = OldHubspot::BlogPost.find_by_blog_post_id(last_blog_post_id)
 
           topics = blog_post.topics
 
           expect(topics).to be_kind_of(Array)
-          expect(topics.first).to be_a(Hubspot::Topic)
+          expect(topics.first).to be_a(OldHubspot::Topic)
         end
       end
 
       context "when the blog post does not have topics" do
         it "returns an empty list" do
-          blog_post = Hubspot::BlogPost.new({ "topic_ids" => [] })
+          blog_post = OldHubspot::BlogPost.new({ "topic_ids" => [] })
 
           topics = blog_post.topics
 
@@ -130,7 +130,7 @@ describe Hubspot do
   end
 
   def hubspot_api_url(path)
-    URI.join(Hubspot::Config.base_url, path)
+    URI.join(OldHubspot::Config.base_url, path)
   end
 
   def timestamp_in_milliseconds(time)

@@ -1,4 +1,5 @@
-describe Hubspot::Connection do
+describe OldHubspot::Connection do
+
   describe ".get_json" do
     it "returns the parsed response from the GET request" do
       path = "/some/path"
@@ -6,7 +7,8 @@ describe Hubspot::Connection do
 
       stub_request(:get, "https://api.hubapi.com/some/path").to_return(status: 200, body: JSON.generate(body))
 
-      result = Hubspot::Connection.get_json(path, {})
+      result = OldHubspot::Connection.get_json(path, {})
+
       expect(result).to eq({ "key" => "value" })
     end
   end
@@ -18,7 +20,8 @@ describe Hubspot::Connection do
 
       stub_request(:post, "https://api.hubapi.com/some/path?name=ABC").to_return(status: 200, body: JSON.generate(body))
 
-      result = Hubspot::Connection.post_json(path, params: { name: "ABC" })
+      result = OldHubspot::Connection.post_json(path, params: { name: "ABC" })
+
       expect(result).to eq({ "id" => 1, "name" => "ABC" })
     end
   end
@@ -29,7 +32,8 @@ describe Hubspot::Connection do
 
       stub_request(:delete, "https://api.hubapi.com/some/path").to_return(status: 204, body: JSON.generate({}))
 
-      result = Hubspot::Connection.delete_json(path, {})
+      result = OldHubspot::Connection.delete_json(path, {})
+
       expect(result.code).to eq(204)
     end
   end
@@ -41,7 +45,7 @@ describe Hubspot::Connection do
 
       stub_request(:put, "https://api.hubapi.com/some/path").to_return(status: 200, body: JSON.generate(vid: 123))
 
-      response = Hubspot::Connection.put_json(path, update_options)
+      response = OldHubspot::Connection.put_json(path, update_options)
 
       assert_requested(
         :put,
@@ -63,7 +67,7 @@ describe Hubspot::Connection do
       stub_request(:put, "https://api.hubapi.com/some/path").to_return(status: 200,
                                                                        body: JSON.generate("response body"))
 
-      Hubspot::Connection.put_json(path, update_options)
+      OldHubspot::Connection.put_json(path, update_options)
 
       expect(logger).to have_received(:info).with(<<~MSG)
         Hubspot: https://api.hubapi.com/some/path.
@@ -79,8 +83,8 @@ describe Hubspot::Connection do
       stub_request(:put, "https://api.hubapi.com/some/path").to_return(status: 401)
 
       expect {
-        Hubspot::Connection.put_json(path, update_options)
-      }.to raise_error(Hubspot::RequestError)
+        OldHubspot::Connection.put_json(path, update_options)
+      }.to raise_error(OldHubspot::RequestError)
     end
   end
 
@@ -89,7 +93,7 @@ describe Hubspot::Connection do
       let(:path) { "/test/:email/profile" }
       let(:params) { { email: "test" } }
       let(:options) { {} }
-      subject { Hubspot::Connection.send(:generate_url, path, params, options) }
+      subject { OldHubspot::Connection.send(:generate_url, path, params, options) }
 
       it "doesn't modify params" do
         expect { subject }.to_not change{params}
@@ -100,14 +104,14 @@ describe Hubspot::Connection do
         let(:params) { {} }
 
         before do
-          Hubspot.configure(access_token: ENV.fetch("HUBSPOT_ACCESS_TOKEN"), portal_id: ENV.fetch("HUBSPOT_PORTAL_ID"))
+          OldHubspot.configure(access_token: ENV.fetch("HUBSPOT_ACCESS_TOKEN"), portal_id: ENV.fetch("HUBSPOT_PORTAL_ID"))
         end
 
         it { should == "https://api.hubapi.com/test/#{ENV.fetch('HUBSPOT_PORTAL_ID')}/profile" }
       end
 
       context "when configure hasn't been called" do
-        before { Hubspot::Config.reset! }
+        before { OldHubspot::Config.reset! }
         it "raises a config exception" do
           expect { subject }.to raise_error Hubspot::ConfigurationError
         end
@@ -117,7 +121,7 @@ describe Hubspot::Connection do
         let(:params) { {} }
 
         it "raises an interpolation exception" do
-          expect{ subject }.to raise_error Hubspot::MissingInterpolation
+          expect{ subject }.to raise_error OldHubspot::MissingInterpolation
         end
       end
 
@@ -162,7 +166,7 @@ describe Hubspot::Connection do
       end
 
       context "passing Array as parameters for batch mode, key is prefixed with batch_" do
-        let(:path) { Hubspot::ContactList::LIST_BATCH_PATH }
+        let(:path) { OldHubspot::ContactList::LIST_BATCH_PATH }
         let(:params) { { batch_list_id: [1,2,3] } }
         it { should == "https://api.hubapi.com/contacts/v1/lists/batch?listId=1&listId=2&listId=3" }
       end
@@ -171,12 +175,12 @@ describe Hubspot::Connection do
 
   def stub_logger
     instance_double(Logger, info: true).tap do |logger|
-      allow(Hubspot::Config).to receive(:logger).and_return(logger)
+      allow(OldHubspot::Config).to receive(:logger).and_return(logger)
     end
   end
 end
 
-describe Hubspot::EventConnection do
+describe OldHubspot::EventConnection do
   describe '.trigger' do
     let(:path) { '/path' }
     let(:options) { { params: {} } }

@@ -1,4 +1,4 @@
-module Hubspot
+module OldHubspot
   class Utils
     class << self
       # Parses the hubspot properties format into a key-value hash
@@ -18,6 +18,31 @@ module Hubspot
       def hash_to_properties(hash, opts = {})
         key_name = opts[:key_name] || "property"
         hash.map { |k, v| { key_name => k.to_s, "value" => v } }
+      end
+
+      def dump_properties(klass, hapikey=ENV['HUBSPOT_API_KEY'], filter={})
+        OldHubspot::Deprecator.build.deprecation_warning("Hubspot::Utils.dump_properties")
+
+        with_hapikey(hapikey) do
+          { 'groups'     => klass.groups({}, filter),
+            'properties' => klass.all({}, filter).select { |p| !p['hubspotDefined'] }
+          }
+        end
+      end
+
+      def restore_properties(klass, hapikey=ENV['HUPSPOT_API_KEY'], properties={}, dry_run=false)
+        OldHubspot::Deprecator.build.deprecation_warning("Hubspot::Utils.restore_properties")
+
+        existing_properties                       = dump_properties(klass, hapikey)
+        skip, new_groups, new_props, update_props = compare_property_lists(klass, properties, existing_properties)
+        puts '', 'Dry Run - Changes will not be applied' if dry_run
+        puts '','Skipping'
+        skip.each { |h| puts "#{h[:reason]} - #{h[:prop]['groupName']}:#{h[:prop]['name']}" }
+        with_hapikey(hapikey) do
+          create_groups(klass, new_groups, dry_run)
+          create_properties(klass, new_props, dry_run)
+          update_properties(klass, update_props, dry_run)
+        end
       end
 
       def create_groups(klass, groups, dry_run=false)
@@ -85,6 +110,11 @@ module Hubspot
           end
         end
         [skip, new_groups.to_a, new_props, update_props]
+      end
+
+      def with_hapikey(hapikey)
+        OldHubspot.configure(hapikey: hapikey)
+        yield if block_given?
       end
 
       private

@@ -1,7 +1,7 @@
 require 'logger'
 require 'hubspot/connection'
 
-module Hubspot
+module OldHubspot
   class Config
     CONFIG_KEYS = [
       :hapikey, :base_url, :portal_id, :logger, :access_token, :client_id,
@@ -28,7 +28,7 @@ module Hubspot
         @custom_event_prefix = config['custom_event_prefix']
 
         unless authentication_uncertain?
-          raise Hubspot::ConfigurationError.new("You must provide either an access_token or an hapikey")
+          raise OldHubspot::ConfigurationError.new("You must provide either an access_token or an hapikey")
         end
 
         if hapikey.present?
@@ -36,7 +36,7 @@ module Hubspot
         end
 
         if access_token.present?
-          Hubspot::Connection.headers("Authorization" => "Bearer #{access_token}")
+          OldHubspot::Connection.headers("Authorization" => "Bearer #{access_token}")
         end
         self
       end
@@ -47,12 +47,12 @@ module Hubspot
         @portal_id = nil
         @logger = DEFAULT_LOGGER
         @access_token = nil
-        Hubspot::Connection.headers({})
+        OldHubspot::Connection.headers({})
       end
 
       def ensure!(*params)
         params.each do |p|
-          raise Hubspot::ConfigurationError.new("'#{p}' not configured") unless instance_variable_get "@#{p}"
+          raise OldHubspot::ConfigurationError.new("'#{p}' not configured") unless instance_variable_get "@#{p}"
         end
       end
 
