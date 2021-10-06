@@ -1,6 +1,6 @@
 require 'hubspot-ruby'
 require 'rails'
-module Hubspot
+module OldHubspot
   class Railtie < Rails::Railtie
     rake_tasks do
       spec = Gem::Specification.find_by_name('hubspot-ruby')

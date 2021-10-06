@@ -1,6 +1,6 @@
 require 'hubspot/utils'
 
-module Hubspot
+module OldHubspot
   #
   # HubSpot Deals API
   #
@@ -23,7 +23,7 @@ module Hubspot
 
     def initialize(response_hash)
       props = response_hash['properties'] || {}
-      @properties = Hubspot::Utils.properties_to_hash(props)
+      @properties = OldHubspot::Utils.properties_to_hash(props)
       @portal_id = response_hash["portalId"]
       @deal_id = response_hash["dealId"]
       @company_ids = response_hash["associations"]["associatedCompanyIds"]
@@ -34,9 +34,9 @@ module Hubspot
       def create!(portal_id, company_ids, vids, params={})
         #TODO: clean following hash, Hubspot::Utils should do the trick
         associations_hash = {"portalId" => portal_id, "associations" => { "associatedCompanyIds" => company_ids, "associatedVids" => vids}}
-        post_data = associations_hash.merge({ properties: Hubspot::Utils.hash_to_properties(params, key_name: "name") })
+        post_data = associations_hash.merge({ properties: OldHubspot::Utils.hash_to_properties(params, key_name: "name") })
 
-        response = Hubspot::Connection.post_json(CREATE_DEAL_PATH, params: {}, body: post_data )
+        response = OldHubspot::Connection.post_json(CREATE_DEAL_PATH, params: {}, body: post_data )
         new(response)
       end
 
@@ -47,12 +47,12 @@ module Hubspot
        def associate!(deal_id, company_ids=[], vids=[])
          objecttype = company_ids.any? ? 'COMPANY' : 'CONTACT'
          object_ids = (company_ids.any? ? company_ids : vids).join('&id=')
-         Hubspot::Connection.put_json(ASSOCIATE_DEAL_PATH, params: { deal_id: deal_id, OBJECTTYPE: objecttype, objectId: object_ids}, body: {})
+         OldHubspot::Connection.put_json(ASSOCIATE_DEAL_PATH, params: { deal_id: deal_id, OBJECTTYPE: objecttype, objectId: object_ids}, body: {})
        end
 
 
       def find(deal_id)
-        response = Hubspot::Connection.get_json(DEAL_PATH, { deal_id: deal_id })
+        response = OldHubspot::Connection.get_json(DEAL_PATH, { deal_id: deal_id })
         new(response)
       end
 
@@ -60,7 +60,7 @@ module Hubspot
         path = ALL_DEALS_PATH
 
         opts[:includeAssociations] = true # Needed for initialize to work
-        response = Hubspot::Connection.get_json(path, opts)
+        response = OldHubspot::Connection.get_json(path, opts)
 
         result = {}
         result['deals'] = response['deals'].map { |d| new(d) }
@@ -74,13 +74,13 @@ module Hubspot
       # @param count [Integer] the amount of deals to return.
       # @param offset [Integer] pages back through recent contacts.
       def recent(opts = {})
-        response = Hubspot::Connection.get_json(RECENT_UPDATED_PATH, opts)
+        response = OldHubspot::Connection.get_json(RECENT_UPDATED_PATH, opts)
         response['results'].map { |d| new(d) }
       end
 
       # Find all deals associated to a company
       # {http://developers.hubspot.com/docs/methods/deals/get-associated-deals}
-      # @param company [Hubspot::Company] the company
+      # @param company [OldHubspot::Company] the company
       # @return [Array] Array of Hubspot::Deal records
       def find_by_company(company)
         find_by_association company
@@ -88,7 +88,7 @@ module Hubspot
 
       # Find all deals associated to a contact
       # {http://developers.hubspot.com/docs/methods/deals/get-associated-deals}
-      # @param contact [Hubspot::Contact] the contact
+      # @param contact [OldHubspot::Contact] the contact
       # @return [Array] Array of Hubspot::Deal records
       def find_by_contact(contact)
         find_by_association contact
@@ -96,18 +96,18 @@ module Hubspot
 
       # Find all deals associated to a contact or company
       # {http://developers.hubspot.com/docs/methods/deals/get-associated-deals}
-      # @param object [Hubspot::Contact || Hubspot::Company] a contact or company
+      # @param object [Hubspot::Contact || OldHubspot::Company] a contact or company
       # @return [Array] Array of Hubspot::Deal records
       def find_by_association(object)
         path = ASSOCIATED_DEAL_PATH
         objectType =  case object
-                      when Hubspot::Company then :company
-                      when Hubspot::Contact then :contact
-                      else raise(Hubspot::InvalidParams, "Instance type not supported")
+                      when OldHubspot::Company then :company
+                      when OldHubspot::Contact then :contact
+                      else raise(OldHubspot::InvalidParams, "Instance type not supported")
                       end
 
         params = { objectType: objectType, objectId: object.vid }
-        response = Hubspot::Connection.get_json(path, params)
+        response = OldHubspot::Connection.get_json(path, params)
         response["results"].map { |deal_id| find(deal_id) }
       end
     end
@@ -116,7 +116,7 @@ module Hubspot
     # {https://developers.hubspot.com/docs/methods/contacts/delete_contact}
     # @return [TrueClass] true
     def destroy!
-      Hubspot::Connection.delete_json(DEAL_PATH, {deal_id: deal_id})
+      OldHubspot::Connection.delete_json(DEAL_PATH, { deal_id: deal_id})
       @destroyed = true
     end
 
@@ -131,10 +131,10 @@ module Hubspot
     # Updates the properties of a deal
     # {https://developers.hubspot.com/docs/methods/deals/update_deal}
     # @param params [Hash] hash of properties to update
-    # @return [Hubspot::Deal] self
+    # @return [OldHubspot::Deal] self
     def update!(params)
-      query = {"properties" => Hubspot::Utils.hash_to_properties(params.stringify_keys!, key_name: 'name')}
-      Hubspot::Connection.put_json(UPDATE_DEAL_PATH, params: { deal_id: deal_id }, body: query)
+      query = {"properties" => OldHubspot::Utils.hash_to_properties(params.stringify_keys!, key_name: 'name')}
+      OldHubspot::Connection.put_json(UPDATE_DEAL_PATH, params: { deal_id: deal_id }, body: query)
       @properties.merge!(params)
       self
     end
