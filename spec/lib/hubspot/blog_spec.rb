@@ -4,8 +4,8 @@ describe OldHubspot do
   before { Timecop.freeze(Time.utc(2012, 'Oct', 10)) }
   after { Timecop.return }
 
-  let(:last_blog_id) { Hubspot::Blog.list.last['id'] }
-  let(:last_blog_post_id) { Hubspot::Blog.list.last.posts.first['id'] }
+  let(:last_blog_id) { OldHubspot::Blog.list.last['id'] }
+  let(:last_blog_post_id) { OldHubspot::Blog.list.last.posts.first['id'] }
 
   describe OldHubspot::Blog do
     describe ".list" do
@@ -22,7 +22,7 @@ describe OldHubspot do
     describe ".find_by_id" do
       it "retrieves a blog by id" do
         VCR.use_cassette("blog_list") do
-          result = Hubspot::Blog.find_by_id(last_blog_id)
+          result = OldHubspot::Blog.find_by_id(last_blog_id)
 
           expect(result).to be_a(OldHubspot::Blog)
         end
