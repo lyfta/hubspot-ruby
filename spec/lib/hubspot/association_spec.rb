@@ -25,7 +25,7 @@ RSpec.describe Hubspot::Association do
   end
 
   describe '.batch_create' do
-    let(:deal) { Hubspot::Deal.create!(portal_id, [], [], {}) }
+    let(:deal) { OldHubspot::Deal.create!(portal_id, [], [], {}) }
     let(:contact2) { create :contact }
 
     subject { described_class.batch_create(*associations) }
@@ -45,7 +45,7 @@ RSpec.describe Hubspot::Association do
 
       it 'associates the resources' do
         expect(subject).to be true
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         expect(find_deal.vids).to eq [contact.id, contact2.id]
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe Hubspot::Association do
 
       it 'returns false' do
         expect(subject).to eq(false)
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         expect(find_deal.vids).to eq []
       end
     end
@@ -97,7 +97,7 @@ RSpec.describe Hubspot::Association do
 
   describe '.batch_delete' do
     let(:company2) { create(:company) }
-    let(:deal) { Hubspot::Deal.create!(portal_id, [company.id, company2.id], [], {}) }
+    let(:deal) { OldHubspot::Deal.create!(portal_id, [company.id, company2.id], [], {}) }
 
     subject { described_class.batch_delete("Deal", "Company", associations) }
 
@@ -112,7 +112,7 @@ RSpec.describe Hubspot::Association do
 
       it 'dissociates the resources' do
         expect(subject).to be true
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         expect(find_deal.company_ids).to eq []
       end
     end
@@ -128,7 +128,7 @@ RSpec.describe Hubspot::Association do
 
       it 'does not raise an error, removes the valid associations' do
         expect(subject).to be true
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         expect(find_deal.company_ids).to eq [company2.id]
       end
     end
@@ -143,7 +143,7 @@ RSpec.describe Hubspot::Association do
       let(:resource_type) { "Deal" }
       let(:resource_id) { deal.deal_id }
       let(:to_object_type) { "Contact" }
-      let(:deal) { Hubspot::Deal.create!(portal_id, [], contact_ids, {}) }
+      let(:deal) { OldHubspot::Deal.create!(portal_id, [], contact_ids, {}) }
       let(:contact_ids) { [contact.id, second_contact.id] }
       let(:second_contact) { create :contact }
 
@@ -158,7 +158,7 @@ RSpec.describe Hubspot::Association do
       let(:to_object_type) { "Foo" }
 
       it 'raises an error' do
-        expect { subject }.to raise_error(Hubspot::InvalidParams, 'Object type not supported')
+        expect { subject }.to raise_error(OldHubspot::InvalidParams, 'Object type not supported')
       end
     end
   end

@@ -17,7 +17,7 @@ module Hubspot
     class << self
       def all(opts = {})
         options = { properties: BASE_PROPERTIES.join(','), **opts.compact }
-        response = Hubspot::Connection.get_json(MEETINGS_PATH, options)
+        response = OldHubspot::Connection.get_json(MEETINGS_PATH, options)
         meetings = response['results'].map { |result| new(result) }
 
         {
@@ -27,12 +27,12 @@ module Hubspot
       end
 
       def find(id)
-        response = Hubspot::Connection.get_json(MEETING_PATH, { meeting_id: id, properties: BASE_PROPERTIES.join(',') })
+        response = OldHubspot::Connection.get_json(MEETING_PATH, { meeting_id: id, properties: BASE_PROPERTIES.join(',') })
         new(response)
       end
 
       def find_by_contact(contact_id)
-        response = Hubspot::Connection.post_json(MEETING_SEARCH_PATH, {
+        response = OldHubspot::Connection.post_json(MEETING_SEARCH_PATH, {
             params: {},
             body: {
               properties: BASE_PROPERTIES,
@@ -55,16 +55,16 @@ module Hubspot
             hs_meeting_outcome: 'SCHEDULED'
           }
         }
-        response = Hubspot::Connection.post_json(MEETINGS_PATH, params: {}, body: body)
+        response = OldHubspot::Connection.post_json(MEETINGS_PATH, params: {}, body: body)
         HashWithIndifferentAccess.new(response)
       end
 
       def destroy!(meeting_id)
-        Hubspot::Connection.delete_json(MEETING_PATH, {meeting_id: meeting_id})
+        OldHubspot::Connection.delete_json(MEETING_PATH, {meeting_id: meeting_id})
       end
 
       def associate!(meeting_id, contact_id)
-        Hubspot::Connection.put_json(ASSOCIATE_MEETING_PATH,
+        OldHubspot::Connection.put_json(ASSOCIATE_MEETING_PATH,
                                      params: {
                                        meeting_id: meeting_id,
                                        contact_id: contact_id

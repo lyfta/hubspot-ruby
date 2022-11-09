@@ -32,7 +32,7 @@ class Hubspot::Association
     def batch_create(from_object_type, to_object_type, associations)
       definition_id = ASSOCIATION_DEFINITIONS.dig(from_object_type, to_object_type)
       request = { inputs: associations.map { |assocation| build_create_association_body(assocation, definition_id) } }
-      response = Hubspot::Connection.post_json("/crm/v4/associations/#{from_object_type}/#{to_object_type}/batch/create", params: { no_parse: true }, body: request)
+      response = OldHubspot::Connection.post_json("/crm/v4/associations/#{from_object_type}/#{to_object_type}/batch/create", params: { no_parse: true }, body: request)
       return false if response.parsed_response["errors"].present?
 
       response.success?
@@ -48,7 +48,7 @@ class Hubspot::Association
     # Hubspot::Association.batch_delete("Company", "Contact", [{ from_id: 1, to_id: 2}])
     def batch_delete(from_object_type, to_object_type, associations)
       request = { inputs: build_delete_associations_body(associations) }
-      Hubspot::Connection.post_json("/crm/v4/associations/#{from_object_type}/#{to_object_type}/batch/archive", params: { no_parse: true }, body: request).success?
+      OldHubspot::Connection.post_json("/crm/v4/associations/#{from_object_type}/#{to_object_type}/batch/archive", params: { no_parse: true }, body: request).success?
     end
 
     # Retrieve all associated resources given a source (object_type and object_id) and a relation type (to_object_type)
@@ -57,9 +57,9 @@ class Hubspot::Association
     # Hubspot::Association.all("Company", 42, "Contact")
     def all(object_type, object_id, to_object_type)
       klass = OBJECT_TARGET_TO_CLASS[to_object_type]
-      raise(Hubspot::InvalidParams, 'Object type not supported') unless klass.present?
+      raise(OldHubspot::InvalidParams, 'Object type not supported') unless klass.present?
 
-      response = Hubspot::Connection.get_json("/crm/v4/objects/#{object_type}/#{object_id}/associations/#{to_object_type}", {})
+      response = OldHubspot::Connection.get_json("/crm/v4/objects/#{object_type}/#{object_id}/associations/#{to_object_type}", {})
       response['results'].map { |result| klass.find(result["toObjectId"]) }
     end
 
