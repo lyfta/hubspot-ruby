@@ -27,7 +27,7 @@ module OldHubspot
       end
 
       def find(path, property_name, opts={})
-        response = Hubspot::Connection.get_json(path, opts.merge({ property_name: property_name }))
+        response = OldHubspot::Connection.get_json(path, opts.merge({ property_name: property_name }))
       end
 
       def groups(path, opts={}, filter={})
@@ -36,7 +36,7 @@ module OldHubspot
       end
 
       def find_group(path, group_name, opts={})
-        response = Hubspot::Connection.get_json(path, opts.merge({ group_name: group_name }))
+        response = OldHubspot::Connection.get_json(path, opts.merge({ group_name: group_name }))
       end
 
       def create!(path, params={})
