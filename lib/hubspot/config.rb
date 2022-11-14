@@ -32,7 +32,7 @@ module OldHubspot
         end
 
         if hapikey.present?
-          Hubspot::Deprecator.build.deprecation_warning("hapikey", "please use access_token instead. See https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app")
+          OldHubspot::Deprecator.build.deprecation_warning("hapikey", "please use access_token instead. See https://developers.hubspot.com/docs/api/migrate-an-api-key-integration-to-a-private-app")
         end
 
         if access_token.present?
