@@ -1,11 +1,11 @@
 describe OldHubspot::Deal do
   let(:portal_id) { ENV.fetch("HUBSPOT_PORTAL_ID").to_i }
-  let(:company) { Hubspot::Company.create(name: SecureRandom.hex) }
+  let(:company) { OldHubspot::Company.create(name: SecureRandom.hex) }
   let(:company_id) { company.id }
-  let(:contact) { Hubspot::Contact.create("#{SecureRandom.hex}@hubspot.com") }
+  let(:contact) { OldHubspot::Contact.create("#{SecureRandom.hex}@hubspot.com") }
   let(:vid) { contact.id }
   let(:amount) { '30' }
-  let(:deal) { Hubspot::Deal.create!(portal_id, [company_id], [vid], { amount: amount}) }
+  let(:deal) { OldHubspot::Deal.create!(portal_id, [company_id], [vid], { amount: amount}) }
 
   describe ".create!" do
     cassette "deal_create"
@@ -25,7 +25,7 @@ describe OldHubspot::Deal do
 
       it 'updates' do
         expect(subject).to be_truthy
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         expect(find_deal['dealname']).to eq 'super deal'
       end
     end
@@ -47,7 +47,7 @@ describe OldHubspot::Deal do
 
       it 'updates' do
         expect(subject).to be_truthy
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         expect(find_deal['dealname']).to eq 'super deal'
       end
     end
@@ -57,7 +57,7 @@ describe OldHubspot::Deal do
       subject { described_class.update!(0, changed_properties) }
 
       it 'fails with an error' do
-        expect { subject }.to raise_error Hubspot::RequestError
+        expect { subject }.to raise_error OldHubspot::RequestError
       end
     end
   end
@@ -97,14 +97,14 @@ describe OldHubspot::Deal do
 
   describe '.associate' do
     cassette
-    let(:deal) { Hubspot::Deal.create!(portal_id, [], [], {}) }
+    let(:deal) { OldHubspot::Deal.create!(portal_id, [], [], {}) }
     let(:contact_id) { contact.id }
 
-    subject { Hubspot::Deal.associate!(deal.deal_id, [company.id], [contact_id]) }
+    subject { OldHubspot::Deal.associate!(deal.deal_id, [company.id], [contact_id]) }
 
     it 'associates the deal to the contact and the company' do
       subject
-      find_deal = Hubspot::Deal.find(deal.deal_id)
+      find_deal = OldHubspot::Deal.find(deal.deal_id)
       find_deal.company_ids.should eql [company.id]
       find_deal.vids.should eql [contact.id]
     end
@@ -114,7 +114,7 @@ describe OldHubspot::Deal do
 
       it 'returns false and changes valid associations' do
         expect(subject).to eq(false)
-        find_deal = Hubspot::Deal.find(deal.deal_id)
+        find_deal = OldHubspot::Deal.find(deal.deal_id)
         find_deal.company_ids.should eql [company.id]
         find_deal.vids.should eql []
       end
@@ -159,7 +159,7 @@ describe OldHubspot::Deal do
 
     it 'must get the recents updated deals' do
       deal
-      deals = Hubspot::Deal.recent
+      deals = OldHubspot::Deal.recent
 
       first = deals.first
 
@@ -167,8 +167,8 @@ describe OldHubspot::Deal do
     end
 
     it 'must filter only 2 deals' do
-      3.times { Hubspot::Deal.create!(portal_id, [company_id], [vid], { amount: amount}) }
-      deals = Hubspot::Deal.recent(count: 2)
+      3.times { OldHubspot::Deal.create!(portal_id, [company_id], [vid], { amount: amount}) }
+      deals = OldHubspot::Deal.recent(count: 2)
       expect(deals.size).to eql 2
     end
   end

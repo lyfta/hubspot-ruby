@@ -50,7 +50,7 @@ module OldHubspot
       def all(opts = {})
         path = ALL_ENGAGEMENTS_PATH
 
-        response = Hubspot::Connection.get_json(path, opts)
+        response = OldHubspot::Connection.get_json(path, opts)
 
         result = {}
         result['engagements'] = response['results'].map { |d| new(d) }
@@ -62,7 +62,7 @@ module OldHubspot
       def recent(opts = {})
         path = RECENT_ENGAGEMENT_PATH
 
-        response = Hubspot::Connection.get_json(path, opts)
+        response = OldHubspot::Connection.get_json(path, opts)
 
         result = {}
         result['engagements'] = response['results'].map { |d| new(d) }

@@ -23,7 +23,7 @@ module Hubspot
 
     class << self
       def find_by_id(file_id)
-        response = Hubspot::Connection.get_json(GET_FILE_PATH, { file_id: file_id })
+        response = OldHubspot::Connection.get_json(GET_FILE_PATH, { file_id: file_id })
         new(response)
       end
     end
@@ -31,7 +31,7 @@ module Hubspot
     # Permanently delete a file and all related data and thumbnails from file manager.
     # {https://developers.hubspot.com/docs/methods/files/hard_delete_file_and_associated_objects}
     def destroy!
-      Hubspot::Connection.post_json(DELETE_FILE_PATH, params: {file_id: id})
+      OldHubspot::Connection.post_json(DELETE_FILE_PATH, params: {file_id: id})
     end
 
   end

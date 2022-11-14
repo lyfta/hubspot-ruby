@@ -1,6 +1,6 @@
 require 'hubspot/utils'
 
-module Hubspot
+module OldHubspot
   #
   # HubSpot Events HTTP API
   #
@@ -11,10 +11,10 @@ module Hubspot
 
     class << self
       def trigger(event_id, email, options = {})
-        default_params = { _n: event_id, _a: Hubspot::Config.portal_id, email: email }
+        default_params = { _n: event_id, _a: OldHubspot::Config.portal_id, email: email }
         options[:params] = default_params.merge(options[:params] || {})
 
-        Hubspot::EventConnection.trigger(POST_EVENT_PATH, options).success?
+        OldHubspot::EventConnection.trigger(POST_EVENT_PATH, options).success?
       end
     end
   end

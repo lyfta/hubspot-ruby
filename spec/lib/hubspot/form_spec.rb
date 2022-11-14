@@ -1,9 +1,9 @@
 describe OldHubspot::Form do
   let(:example_form_hash) do
     VCR.use_cassette('form_example') do
-      guid = Hubspot::Form.all.first.guid
+      guid = OldHubspot::Form.all.first.guid
       headers = { Authorization: "Bearer #{ENV.fetch('HUBSPOT_ACCESS_TOKEN')}" }
-      HTTParty.get("https://api.hubapi.com#{Hubspot::Form::FORMS_PATH}/#{guid}", headers: headers).parsed_response
+      HTTParty.get("https://api.hubapi.com#{OldHubspot::Form::FORMS_PATH}/#{guid}", headers: headers).parsed_response
     end
   end
 
@@ -43,7 +43,7 @@ describe OldHubspot::Form do
 
   describe '.find' do
     cassette 'form_find'
-    subject { OldHubspot::Form.find(Hubspot::Form.all.first.guid) }
+    subject { OldHubspot::Form.find(OldHubspot::Form.all.first.guid) }
 
     context 'when the form is found' do
       it { should be_an_instance_of OldHubspot::Form }
@@ -168,7 +168,7 @@ describe OldHubspot::Form do
     subject { form.update!(params) }
 
     it 'updates properties' do
-      should be_an_instance_of Hubspot::Form
+      should be_an_instance_of OldHubspot::Form
       subject.properties['name'].should start_with('updated form name ')
       subject.properties['redirect'].should be == redirect
     end

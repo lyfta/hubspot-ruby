@@ -9,7 +9,7 @@ describe OldHubspot::Engagement do
 
     let(:example_engagement_hash) { { 'engagement' => { 'id' => 3981023, 'portalId' => 62515, 'associations' => {} } } }
 
-    it  { should be_an_instance_of Hubspot::Engagement }
+    it  { should be_an_instance_of OldHubspot::Engagement }
     its (:id) { should == 3981023 }
   end
 
@@ -79,16 +79,16 @@ describe OldHubspot::Engagement do
 
       it 'must get the engagements list' do
         engagement
-        engagements = Hubspot::Engagement.all
+        engagements = OldHubspot::Engagement.all
 
         first = engagements['engagements'].first
 
-        expect(first).to be_a Hubspot::Engagement
+        expect(first).to be_a OldHubspot::Engagement
       end
 
       it 'must filter only 2 engagements' do
-        3.times { Hubspot::EngagementNote.create!(contact.id, "foo") }
-        engagements = Hubspot::Engagement.all(limit: 2)
+        3.times { OldHubspot::EngagementNote.create!(contact.id, "foo") }
+        engagements = OldHubspot::Engagement.all(limit: 2)
         expect(engagements['engagements'].size).to eql 2
       end
     end

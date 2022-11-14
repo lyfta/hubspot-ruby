@@ -121,7 +121,7 @@ RSpec.describe Hubspot::Meeting do
 
       it 'raises an error' do
         VCR.use_cassette 'meeting_error' do
-          expect { subject }.to raise_error(Hubspot::RequestError)
+          expect { subject }.to raise_error(OldHubspot::RequestError)
         end
       end
     end

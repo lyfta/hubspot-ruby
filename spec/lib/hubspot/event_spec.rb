@@ -1,8 +1,8 @@
-describe Hubspot::Event do
+describe OldHubspot::Event do
   let(:portal_id) { ENV.fetch("HUBSPOT_PORTAL_ID") }
   let(:sent_portal_id) { portal_id }
 
-  before { Hubspot.configure(access_token: ENV.fetch("HUBSPOT_ACCESS_TOKEN"), portal_id: portal_id) }
+  before { OldHubspot.configure(access_token: ENV.fetch("HUBSPOT_ACCESS_TOKEN"), portal_id: portal_id) }
 
   describe '.trigger' do
     let(:event_id) { '000000001625' }
